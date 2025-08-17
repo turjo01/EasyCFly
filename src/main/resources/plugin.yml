@@ -1,0 +1,80 @@
+name: EasyCFly
+version: ${project.version}
+main: dev.turjo.easycfly.EasyCFly
+author: Turjo
+description: ${project.description}
+api-version: 1.20
+website: ${project.url}
+softdepend: [PlaceholderAPI, WorldGuard, GriefPrevention, Lands, Towny, Residence]
+
+commands:
+  cfly:
+    description: Main EasyCFly command
+    usage: /cfly <subcommand>
+    aliases: [fly, claimfly, ecfly]
+  cflyreload:
+    description: Reload EasyCFly configuration
+    usage: /cflyreload
+    permission: easycfly.admin.reload
+  cflytrust:
+    description: Trust a player to fly in your claims
+    usage: /cflytrust <player>
+    aliases: [flytrust, trust]
+  cflyuntrust:
+    description: Untrust a player from flying in your claims
+    usage: /cflyuntrust <player>
+    aliases: [flyuntrust, untrust]
+  cflyinfo:
+    description: Get information about claim flying
+    usage: /cflyinfo
+    aliases: [flyinfo]
+
+permissions:
+  easycfly.*:
+    description: All EasyCFly permissions
+    children:
+      easycfly.fly: true
+      easycfly.admin.*: true
+      easycfly.bypass.*: true
+  
+  easycfly.fly:
+    description: Basic flying permission
+    default: true
+  
+  easycfly.fly.unlimited:
+    description: Unlimited flight time
+    default: op
+  
+  easycfly.admin.*:
+    description: All admin permissions
+    children:
+      easycfly.admin.reload: true
+      easycfly.admin.toggle: true
+      easycfly.admin.bypass: true
+  
+  easycfly.admin.reload:
+    description: Reload plugin configuration
+    default: op
+  
+  easycfly.admin.toggle:
+    description: Toggle flying for other players
+    default: op
+  
+  easycfly.bypass.*:
+    description: All bypass permissions
+    children:
+      easycfly.bypass.cooldown: true
+      easycfly.bypass.cost: true
+      easycfly.bypass.time: true
+  
+  easycfly.bypass.cooldown:
+    description: Bypass flight cooldown
+    default: op
+  
+  easycfly.bypass.cost:
+    description: Bypass flight cost
+    default: op
+  
+  easycfly.bypass.time:
+    description: Bypass flight time limits
+    default: op

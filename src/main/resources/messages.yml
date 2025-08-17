@@ -1,0 +1,147 @@
+# ╔══════════════════════════════════════════════════════════════════════════════╗
+# ║                           EasyCFly Messages                                 ║
+# ║                     Customize all plugin messages                           ║
+# ╚══════════════════════════════════════════════════════════════════════════════╝
+
+# General Messages
+general:
+  prefix: "&8[&6EasyCFly&8] "
+  player-only: "&cThis command can only be used by players!"
+  no-permission: "&cYou don't have permission to use this command!"
+  unknown-command: "&cUnknown command! Use &e/cfly help &cfor help."
+  reload-success: "&aEasyCFly has been reloaded successfully!"
+  plugin-disabled: "&cEasyCFly is currently disabled!"
+
+# Flight Messages
+flight:
+  enabled: "&a✈ Flight enabled! Soar through your claims!"
+  disabled: "&c✈ Flight disabled! Back to the ground."
+  already-enabled: "&eYour flight is already enabled!"
+  already-disabled: "&eYour flight is already disabled!"
+  cannot-fly: "&cYou cannot fly here! Make sure you're in your claim or a trusted area."
+  not-flying: "&cYou are not currently flying!"
+  left-claim: "&cFlight disabled - you left the claim area!"
+  time-expired: "&cYour flight time has expired!"
+  time-warning: "&e⚠ Flight time warning: &c%time% &eseconds remaining!"
+  remaining-time: "&eRemaining flight time: &a%time% &eseconds"
+  unlimited-time: "&aYou have unlimited flight time!"
+  cooldown-active: "&cFlight is on cooldown! Wait &e%time% &cseconds."
+  speed-changed: "&aFlight speed changed to &e%speed%&a!"
+  fall-damage-protected: "&aYou are protected from fall damage for &e%time% &aseconds!"
+
+# Trust System Messages
+trust:
+  player-trusted: "&a%player% &ahas been trusted to fly in your claims!"
+  player-untrusted: "&c%player% &chas been untrusted from your claims!"
+  you-were-trusted: "&aYou have been trusted by &e%player% &ato fly in their claims!"
+  you-were-untrusted: "&cYou have been untrusted by &e%player% &cfrom their claims!"
+  already-trusted: "&e%player% &eis already trusted!"
+  not-trusted: "&c%player% &cis not in your trust list!"
+  cannot-trust-self: "&cYou cannot trust yourself!"
+  player-not-found: "&cPlayer &e%player% &cnot found!"
+  max-reached: "&cYou have reached the maximum number of trusted players! (&e%max%&c)"
+  no-trusted-players: "&eYou haven't trusted any players yet."
+  list-header: "&6&l▬▬▬▬▬▬▬▬▬▬▬ &e&lTrusted Players &6&l▬▬▬▬▬▬▬▬▬▬▬"
+  list-entry: "&8• &a%player%"
+  list-footer: "&6&l▬▬▬▬▬▬▬▬▬▬▬ &e%count%&7/&e%max% &6&l▬▬▬▬▬▬▬▬▬▬▬"
+  cleared: "&aCleared &e%count% &atrusted players from your list!"
+  usage: "&eUsage: &7/cflytrust <player|list|clear>"
+
+# Economy Messages
+economy:
+  charged: "&aYou have been charged &e%cost% &afor flight!"
+  insufficient-funds: "&cYou don't have enough money! Cost: &e%cost%"
+  cost-info: "&eFlight cost: &a%cost%"
+  balance-info: "&eYour balance: &a%balance%"
+
+# Information Messages
+info:
+  header: "&6&l▬▬▬▬▬▬▬▬▬▬▬ &e&lFlight Information &6&l▬▬▬▬▬▬▬▬▬▬▬"
+  status: "&eStatus: %status%"
+  can-fly: "&eCan fly here: %can_fly%"
+  cooldown: "&eCooldown: &c%time% &eseconds"
+  remaining-time: "&eTime remaining: &a%time% &eseconds"
+  cost: "&eFlight cost: &a%cost%"
+  balance: "&eBalance: &a%balance%"
+  trusted-count: "&eTrusted players: &a%count%&7/&a%max%"
+  footer: "&6&l▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬"
+
+# Help Messages
+help:
+  header: "&6&l▬▬▬▬▬▬▬▬▬▬▬ &e&lEasyCFly Help &6&l▬▬▬▬▬▬▬▬▬▬▬"
+  toggle: "&e/cfly &8- &7Toggle flight on/off"
+  on: "&e/cfly on &8- &7Enable flight"
+  off: "&e/cfly off &8- &7Disable flight"
+  status: "&e/cfly status &8- &7View flight information"
+  time: "&e/cfly time &8- &7Check remaining flight time"
+  trust: "&e/cflytrust <player> &8- &7Trust a player to fly"
+  untrust: "&e/cflyuntrust <player> &8- &7Untrust a player"
+  info: "&e/cflyinfo &8- &7View detailed flight info"
+  footer: "&6&l▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬"
+
+# Admin Messages
+admin:
+  reload-success: "&aEasyCFly configuration reloaded successfully!"
+  reload-error: "&cError reloading configuration! Check console for details."
+  player-flight-enabled: "&aEnabled flight for &e%player%&a!"
+  player-flight-disabled: "&cDisabled flight for &e%player%&c!"
+  cooldown-cleared: "&aCleared cooldown for &e%player%&a!"
+  database-error: "&cDatabase error! Check console for details."
+
+# Error Messages
+error:
+  command-error: "&cAn error occurred while executing the command!"
+  database-connection: "&cFailed to connect to database!"
+  claim-plugin-not-found: "&cNo supported claim plugin found!"
+  permission-denied: "&cYou don't have permission to do this!"
+  world-disabled: "&cFlight is disabled in this world!"
+  region-disabled: "&cFlight is disabled in this region!"
+
+# Action Bar Messages
+actionbar:
+  flying: "&a✈ Flying &8| &eTime: &f%time% &8| &eSpeed: &f%speed%"
+  cooldown: "&c⏰ Cooldown: &f%time%s"
+  cannot-fly: "&c✗ Cannot fly here!"
+
+# Boss Bar Messages
+bossbar:
+  flight-time: "Flight Time Remaining"
+  cooldown: "Flight Cooldown"
+
+# GUI Messages
+gui:
+  flight-enabled: "&aFlight: &2ENABLED"
+  flight-disabled: "&cFlight: &4DISABLED"
+  click-to-toggle: "&eClick to toggle flight!"
+  click-to-manage: "&eClick to manage trusted players!"
+  click-for-info: "&eClick for flight information!"
+  
+# Placeholder Messages (for PlaceholderAPI)
+placeholder:
+  flight-status-enabled: "Enabled"
+  flight-status-disabled: "Disabled"
+  yes: "Yes"
+  no: "No"
+  unlimited: "Unlimited"
+  none: "None"
+
+# Update Messages
+update:
+  available: "&aA new version of EasyCFly is available! &e%version%"
+  download: "&eDownload: &b%url%"
+  current-version: "&eCurrent version: &f%current%"
+  latest-version: "&eLatest version: &f%latest%"
+
+# Statistics Messages
+stats:
+  total-flight-time: "&eTotal flight time: &a%time%"
+  total-distance: "&eTotal distance flown: &a%distance%"
+  times-flown: "&eTimes flown: &a%count%"
+  favorite-claim: "&eFavorite claim: &a%claim%"
+
+# Discord Integration Messages
+discord:
+  flight-enabled: "🛫 **%player%** enabled flight in their claim"
+  flight-disabled: "🛬 **%player%** disabled flight"
+  player-trusted: "🤝 **%owner%** trusted **%player%** to fly in their claims"
+  player-untrusted: "❌ **%owner%** untrusted **%player%** from their claims"

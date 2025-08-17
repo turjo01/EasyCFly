@@ -1,0 +1,240 @@
+# ╔══════════════════════════════════════════════════════════════════════════════╗
+# ║                              EasyCFly v2.0.0                                ║
+# ║                     Advanced Claim-Based Flying Plugin                      ║
+# ║                            Developer: Turjo                                 ║
+# ╚══════════════════════════════════════════════════════════════════════════════╝
+
+# General Settings
+settings:
+  # Check for plugin updates on startup
+  check-updates: true
+  
+  # Debug mode for troubleshooting
+  debug: false
+  
+  # Language file to use (messages_en.yml, messages_es.yml, etc.)
+  language: "en"
+
+# Flight Configuration
+flight:
+  # Flight time limit settings
+  time-limit:
+    enabled: true
+    seconds: 300  # 5 minutes default
+    
+  # Flight cooldown settings
+  cooldown:
+    enabled: true
+    seconds: 30
+    
+  # Auto-disable flight when leaving claims
+  auto-disable-on-leave: true
+  
+  # Flight speed settings
+  speed:
+    enabled: true
+    default: 0.1
+    max: 0.5
+    
+  # Prevent fall damage after flight
+  prevent-fall-damage: true
+  fall-damage-protection-time: 5  # seconds
+
+# Trust System
+trust:
+  # Maximum number of players that can be trusted per claim owner
+  max-trusted-players: 10
+  
+  # Allow trusted players to trust others (sub-trust)
+  allow-sub-trust: false
+  
+  # Trust expiration (0 = never expires)
+  expiration-days: 0
+
+# Economy Integration (Requires Vault)
+economy:
+  enabled: false
+  
+  # Default cost for flight
+  default-cost: 10.0
+  
+  # Permission-based costs
+  costs:
+    vip: 5.0
+    premium: 2.0
+    staff: 0.0
+    
+  # Charge per use or per time
+  charge-type: "per-use"  # "per-use" or "per-minute"
+
+# Claim Plugin Integration
+claims:
+  # Supported: WorldGuard, GriefPrevention, Lands, Towny, Residence
+  priority: ["WorldGuard", "GriefPrevention", "Lands", "Towny", "Residence"]
+  
+  # Allow flight in wilderness (unclaimed areas)
+  allow-wilderness: false
+  
+  # Minimum claim size for flight
+  min-claim-size: 100
+
+# Visual Effects
+effects:
+  # Particle effects
+  particles:
+    enabled: true
+    type: "CLOUD"
+    amount: 5
+    
+  # Action bar messages
+  actionbar:
+    enabled: true
+    show-time-remaining: true
+    update-interval: 20  # ticks
+    
+  # Boss bar for flight time
+  bossbar:
+    enabled: true
+    color: "BLUE"
+    style: "SOLID"
+
+# Sound Effects
+sounds:
+  enabled: true
+  flight-enable: "ENTITY_ENDER_DRAGON_FLAP"
+  flight-disable: "ENTITY_BAT_TAKEOFF"
+  trust-add: "ENTITY_EXPERIENCE_ORB_PICKUP"
+  trust-remove: "ENTITY_ITEM_BREAK"
+  error: "ENTITY_VILLAGER_NO"
+
+# Database Settings
+database:
+  type: "sqlite"  # sqlite, mysql
+  
+  # SQLite settings
+  sqlite:
+    file: "easycfly.db"
+    
+  # MySQL settings (if type is mysql)
+  mysql:
+    host: "localhost"
+    port: 3306
+    database: "easycfly"
+    username: "root"
+    password: "password"
+    
+  # Connection pool settings
+  pool:
+    maximum-pool-size: 10
+    minimum-idle: 2
+    connection-timeout: 30000
+
+# Advanced Features
+advanced:
+  # Flight zones - specific areas where flight is allowed
+  flight-zones:
+    enabled: false
+    zones:
+      spawn:
+        world: "world"
+        x1: -100
+        y1: 0
+        z1: -100
+        x2: 100
+        y2: 256
+        z2: 100
+        
+  # Flight trails
+  trails:
+    enabled: true
+    default-trail: "HEART"
+    vip-trails: ["FLAME", "ENCHANTMENT_TABLE", "END_ROD"]
+    
+  # Anti-cheat integration
+  anticheat:
+    enabled: true
+    # Temporarily disable flight when anti-cheat flags player
+    disable-on-flag: true
+    
+  # Flight statistics
+  statistics:
+    enabled: true
+    track-flight-time: true
+    track-distance: true
+
+# GUI Settings
+gui:
+  enabled: true
+  title: "&6&lEasyCFly Control Panel"
+  size: 27
+  
+  # GUI items
+  items:
+    toggle-flight:
+      slot: 13
+      material: "ELYTRA"
+      name: "&a&lToggle Flight"
+      lore:
+        - "&7Click to toggle your flight status"
+        - ""
+        - "&eStatus: %flight_status%"
+    
+    trust-manager:
+      slot: 11
+      material: "PLAYER_HEAD"
+      name: "&b&lTrust Manager"
+      lore:
+        - "&7Manage trusted players"
+        - ""
+        - "&eTrusted: &f%trusted_count%/%max_trusted%"
+    
+    flight-info:
+      slot: 15
+      material: "BOOK"
+      name: "&e&lFlight Information"
+      lore:
+        - "&7View your flight statistics"
+        - ""
+        - "&eTime Remaining: &f%time_remaining%"
+        - "&eCooldown: &f%cooldown%"
+
+# World Settings
+worlds:
+  # Worlds where flight is disabled
+  disabled-worlds:
+    - "world_nether"
+    - "world_the_end"
+    
+  # Per-world flight settings
+  world-settings:
+    world:
+      max-flight-time: 600
+      cooldown: 30
+    world_nether:
+      enabled: false
+
+# Hooks and Integrations
+hooks:
+  # PlaceholderAPI placeholders
+  placeholderapi:
+    enabled: true
+    
+  # Discord integration
+  discord:
+    enabled: false
+    webhook-url: ""
+    log-flight-events: true
+
+# Performance Settings
+performance:
+  # Flight checker interval (ticks)
+  check-interval: 20
+  
+  # Async database operations
+  async-database: true
+  
+  # Cache settings
+  cache:
+    trust-data: true
+    claim-data: true
+    cache-duration: 300  # seconds
