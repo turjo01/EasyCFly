@@ -22,8 +22,8 @@ public class FlightManager {
     private final Map<UUID, Integer> flightTime;
     private final Map<UUID, Location> lastLocation;
     private final Map<UUID, Long> fallProtectionEnd;
-    private final Map<UUID, Boolean> claimCache;
-    private final Map<UUID, Long> cacheExpiry;
+    private final Map<String, Boolean> claimCache;
+    private final Map<String, Long> cacheExpiry;
     
     public FlightManager(EasyCFly plugin) {
         this.plugin = plugin;
@@ -303,8 +303,6 @@ public class FlightManager {
                     if (player == null || !player.isOnline()) {
                         flyingPlayers.remove(uuid);
                         lastLocation.remove(uuid);
-                        claimCache.remove(uuid);
-                        cacheExpiry.remove(uuid);
                         continue;
                     }
                     
@@ -320,16 +318,7 @@ public class FlightManager {
                         lastLocation.put(uuid, currentLoc);
                         
                         // Check if still in valid area
-                        boolean canFlyHere;
-                        
-                        if (useCache && isCacheValid(uuid)) {
-                            canFlyHere = claimCache.getOrDefault(uuid, false);
-                        } else {
-                            canFlyHere = canFly(player, currentLoc);
-                            if (useCache) {
-                                updateCache(uuid, canFlyHere);
-                            }
-                        }
+                        boolean canFlyHere = canFly(player, currentLoc);
                         
                         if (!canFlyHere) {
                             disableFlight(player);
@@ -345,19 +334,5 @@ public class FlightManager {
                 }
             }
         }.runTaskTimer(plugin, checkInterval, checkInterval);
-    }
-    
-    private boolean isCacheValid(UUID player) {
-        Long expiry = cacheExpiry.get(player);
-        if (expiry == null) return false;
-        
-        long currentTick = plugin.getServer().getCurrentTick();
-        return currentTick < expiry;
-    }
-    
-    private void updateCache(UUID player, boolean canFly) {
-        claimCache.put(player, canFly);
-        long cacheDuration = plugin.getConfigManager().getConfig().getInt("flight.performance.cache-duration", 100);
-        cacheExpiry.put(player, plugin.getServer().getCurrentTick() + cacheDuration);
     }
 }
