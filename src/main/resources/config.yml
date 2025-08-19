@@ -70,6 +70,10 @@ economy:
 # Claim Plugin Integration
 claims:
   # Allow flight in wilderness (unclaimed areas)
+  allow-wilderness: true
+  
+  # Require claim ownership or trust to fly
+  require-claim-permission: true
 
 # Visual Effects
 effects:

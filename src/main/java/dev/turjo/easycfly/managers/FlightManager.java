@@ -52,7 +52,9 @@ public class FlightManager {
         // Check cooldown
         if (plugin.getCooldownManager().isOnCooldown(player.getUniqueId()) && 
             !player.hasPermission("easycfly.bypass.cooldown")) {
-            plugin.getLogger().info("Player " + player.getName() + " is on cooldown");
+            long remaining = plugin.getCooldownManager().getRemainingCooldown(player.getUniqueId());
+            plugin.getMessageUtil().sendMessage(player, "flight.cooldown-active", 
+                "%time%", String.valueOf(remaining));
             return false;
         }
         
@@ -60,6 +62,9 @@ public class FlightManager {
         if (plugin.getEconomyManager().isEnabled() && 
             !plugin.getEconomyManager().hasEnoughMoney(player) &&
             !player.hasPermission("easycfly.bypass.cost")) {
+            double cost = plugin.getEconomyManager().getFlightCost(player);
+            plugin.getMessageUtil().sendMessage(player, "economy.insufficient-funds", 
+                "%cost%", plugin.getEconomyManager().formatMoney(cost));
             return false;
         }
         

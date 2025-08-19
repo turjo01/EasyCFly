@@ -42,6 +42,11 @@ public class TrustManager {
             return plugin.getConfigManager().getConfig().getBoolean("claims.allow-wilderness", true);
         }
         
+        // If player is the owner, they're always trusted
+        if (owner.equals(player)) {
+            return true;
+        }
+        
         // Check if player is trusted by owner
         Set<UUID> trustedPlayers = trustData.get(owner);
         return trustedPlayers != null && trustedPlayers.contains(player);
