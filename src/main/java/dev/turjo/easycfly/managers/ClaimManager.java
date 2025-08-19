@@ -6,20 +6,48 @@ import me.ryanhamshire.GriefPrevention.GriefPrevention;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
+import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class ClaimManager {
     
     private final EasyCFly plugin;
+    private final Map<String, Boolean> claimCache;
+    private final Map<String, Long> cacheExpiry;
     
     public ClaimManager(EasyCFly plugin) {
         this.plugin = plugin;
+        this.claimCache = new ConcurrentHashMap<>();
+        this.cacheExpiry = new ConcurrentHashMap<>();
     }
     
     /**
      * Check if player is in their own claim or wilderness (if allowed)
      */
     public boolean canFlyAtLocation(Player player, Location location) {
+        // Create cache key
+        String cacheKey = player.getUniqueId() + ":" + location.getBlockX() + ":" + location.getBlockZ() + ":" + location.getWorld().getName();
+        
+        // Check cache first for performance
+        if (plugin.getConfigManager().getConfig().getBoolean("flight.performance.cache-claim-lookups", true)) {
+            Boolean cached = getCachedResult(cacheKey);
+            if (cached != null) {
+                return cached;
+            }
+        }
+        
+        boolean result = checkFlightPermission(player, location);
+        
+        // Cache the result
+        if (plugin.getConfigManager().getConfig().getBoolean("flight.performance.cache-claim-lookups", true)) {
+            cacheResult(cacheKey, result);
+        }
+        
+        return result;
+    }
+    
+    private boolean checkFlightPermission(Player player, Location location) {
         plugin.getLogger().info("Checking flight permission for " + player.getName() + " at " + 
             location.getBlockX() + ", " + location.getBlockY() + ", " + location.getBlockZ());
         
@@ -68,6 +96,22 @@ public class ClaimManager {
         // No claim plugin found - allow if wilderness is enabled
         plugin.getLogger().info("No GriefPrevention found - using wilderness setting: " + allowWilderness);
         return allowWilderness;
+    }
+    
+    private Boolean getCachedResult(String key) {
+        Long expiry = cacheExpiry.get(key);
+        if (expiry == null || System.currentTimeMillis() > expiry) {
+            claimCache.remove(key);
+            cacheExpiry.remove(key);
+            return null;
+        }
+        return claimCache.get(key);
+    }
+    
+    private void cacheResult(String key, boolean result) {
+        claimCache.put(key, result);
+        long cacheDuration = plugin.getConfigManager().getConfig().getInt("flight.performance.cache-duration", 100) * 50; // Convert ticks to ms
+        cacheExpiry.put(key, System.currentTimeMillis() + cacheDuration);
     }
     
     /**

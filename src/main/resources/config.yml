@@ -39,6 +39,24 @@ flight:
   # Prevent fall damage after flight
   prevent-fall-damage: true
   fall-damage-protection-time: 5  # seconds
+  
+  # Feather falling effect when leaving claim while flying
+  feather-falling-on-leave:
+    enabled: true
+    duration: 10  # seconds
+    amplifier: 4  # 0-255 (higher = slower falling)
+    
+  # Performance settings
+  performance:
+    # How often to check if player is still in valid flight area (ticks)
+    location-check-interval: 40  # 2 seconds (20 ticks = 1 second)
+    
+    # Batch size for processing multiple players
+    batch-size: 10
+    
+    # Cache claim lookups to reduce API calls
+    cache-claim-lookups: true
+    cache-duration: 100  # ticks (5 seconds)
 
 # Trust System
 trust:
