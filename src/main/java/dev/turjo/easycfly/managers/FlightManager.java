@@ -247,29 +247,3 @@ public class FlightManager {
         }.runTaskTimer(plugin, 40L, 40L); // Check every 2 seconds
     }
 }
-                        disableFlight(player);
-                        plugin.getMessageUtil().sendMessage(player, "flight.left-claim");
-                    }
-                }
-            }
-        }.runTaskTimer(plugin, 20L, 20L);
-    }
-    
-    private void spawnFlightParticles(Player player) {
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                if (!isFlying(player)) {
-                    cancel();
-                    return;
-                }
-                
-                Location loc = player.getLocation().add(0, -0.5, 0);
-                player.getWorld().spawnParticle(
-                    org.bukkit.Particle.CLOUD, 
-                    loc, 5, 0.3, 0.1, 0.3, 0.02
-                );
-            }
-        }.runTaskTimer(plugin, 0L, 10L);
-    }
-}
