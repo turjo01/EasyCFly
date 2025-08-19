@@ -1,22 +1,11 @@
 package dev.turjo.easycfly;
 
-import dev.turjo.easycfly.commands.CFlyCommand;
-import dev.turjo.easycfly.commands.CFlyReloadCommand;
-import dev.turjo.easycfly.commands.CFlyTrustCommand;
-import dev.turjo.easycfly.commands.CFlyUntrustCommand;
-import dev.turjo.easycfly.commands.CFlyInfoCommand;
+import dev.turjo.easycfly.commands.*;
 import dev.turjo.easycfly.config.ConfigManager;
-import dev.turjo.easycfly.database.DatabaseManager;
-import dev.turjo.easycfly.hooks.HookManager;
 import dev.turjo.easycfly.listeners.FlightListener;
 import dev.turjo.easycfly.listeners.PlayerListener;
-import dev.turjo.easycfly.managers.FlightManager;
-import dev.turjo.easycfly.managers.TrustManager;
-import dev.turjo.easycfly.managers.CooldownManager;
-import dev.turjo.easycfly.managers.EconomyManager;
-import dev.turjo.easycfly.placeholders.CFlyPlaceholders;
+import dev.turjo.easycfly.managers.*;
 import dev.turjo.easycfly.utils.MessageUtil;
-import dev.turjo.easycfly.utils.UpdateChecker;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -26,7 +15,7 @@ import java.util.logging.Level;
  * EasyCFly - Advanced Claim-Based Flying Plugin
  * 
  * @author Turjo
- * @version 2.0.0
+ * @version 1.1.1
  */
 public final class EasyCFly extends JavaPlugin {
     
@@ -34,16 +23,14 @@ public final class EasyCFly extends JavaPlugin {
     
     // Managers
     private ConfigManager configManager;
-    private DatabaseManager databaseManager;
     private FlightManager flightManager;
     private TrustManager trustManager;
     private CooldownManager cooldownManager;
     private EconomyManager economyManager;
-    private HookManager hookManager;
+    private ClaimManager claimManager;
     
     // Utils
     private MessageUtil messageUtil;
-    private UpdateChecker updateChecker;
     
     @Override
     public void onEnable() {
@@ -57,12 +44,6 @@ public final class EasyCFly extends JavaPlugin {
         
         // Register listeners
         registerListeners();
-        
-        // Setup hooks
-        setupHooks();
-        
-        // Check for updates
-        checkForUpdates();
         
         // Startup message
         getLogger().info("╔══════════════════════════════════════╗");
@@ -81,11 +62,6 @@ public final class EasyCFly extends JavaPlugin {
             flightManager.disableAllFlying();
         }
         
-        // Close database connections
-        if (databaseManager != null) {
-            databaseManager.close();
-        }
-        
         getLogger().info("EasyCFly has been disabled successfully!");
     }
     
@@ -98,18 +74,12 @@ public final class EasyCFly extends JavaPlugin {
             // Message utility
             messageUtil = new MessageUtil(this);
             
-            // Database
-            databaseManager = new DatabaseManager(this);
-            databaseManager.initialize();
-            
             // Core managers
+            claimManager = new ClaimManager(this);
             trustManager = new TrustManager(this);
             cooldownManager = new CooldownManager(this);
             economyManager = new EconomyManager(this);
             flightManager = new FlightManager(this);
-            
-            // Hook manager
-            hookManager = new HookManager(this);
             
             getLogger().info("All managers initialized successfully!");
             
@@ -136,23 +106,6 @@ public final class EasyCFly extends JavaPlugin {
         getLogger().info("Event listeners registered successfully!");
     }
     
-    private void setupHooks() {
-        hookManager.setupHooks();
-        
-        // PlaceholderAPI
-        if (hookManager.isPlaceholderAPIEnabled()) {
-            new CFlyPlaceholders(this).register();
-            getLogger().info("PlaceholderAPI integration enabled!");
-        }
-    }
-    
-    private void checkForUpdates() {
-        if (configManager.getConfig().getBoolean("settings.check-updates", true)) {
-            updateChecker = new UpdateChecker(this);
-            updateChecker.checkForUpdates();
-        }
-    }
-    
     public void reload() {
         try {
             configManager.reloadConfigs();
@@ -172,10 +125,6 @@ public final class EasyCFly extends JavaPlugin {
         return configManager;
     }
     
-    public DatabaseManager getDatabaseManager() {
-        return databaseManager;
-    }
-    
     public FlightManager getFlightManager() {
         return flightManager;
     }
@@ -192,15 +141,11 @@ public final class EasyCFly extends JavaPlugin {
         return economyManager;
     }
     
-    public HookManager getHookManager() {
-        return hookManager;
+    public ClaimManager getClaimManager() {
+        return claimManager;
     }
     
     public MessageUtil getMessageUtil() {
         return messageUtil;
-    }
-    
-    public UpdateChecker getUpdateChecker() {
-        return updateChecker;
     }
 }

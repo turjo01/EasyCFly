@@ -35,15 +35,20 @@ public class TrustManager {
     }
     
     public boolean isTrusted(Location location, UUID player) {
-        // Get claim owner at location
-        UUID owner = plugin.getHookManager().getClaimOwner(location);
+        // Get claim owner at location  
+        UUID owner = plugin.getClaimManager().getClaimOwner(location);
         if (owner == null) {
-            return false;
+            // No claim owner means wilderness - allow if wilderness is enabled
+            return plugin.getConfigManager().getConfig().getBoolean("claims.allow-wilderness", true);
         }
         
         // Check if player is trusted by owner
         Set<UUID> trustedPlayers = trustData.get(owner);
         return trustedPlayers != null && trustedPlayers.contains(player);
+    }
+    
+    public boolean isTrustedAtLocation(UUID player, Location location) {
+        return isTrusted(location, player);
     }
     
     public boolean isTrusted(UUID owner, UUID player) {

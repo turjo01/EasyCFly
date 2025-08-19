@@ -6,11 +6,11 @@
 
     <groupId>dev.turjo</groupId>
     <artifactId>EasyCFly</artifactId>
-    <version>2.0.0</version>
+    <version>1.1.1</version>
     <packaging>jar</packaging>
 
     <name>EasyCFly</name>
-    <description>Advanced claim-based flying plugin with modern features and futuristic design</description>
+    <description>Premium claim-based flying plugin with advanced features</description>
     <url>https://github.com/turjo/EasyCFly</url>
 
     <properties>

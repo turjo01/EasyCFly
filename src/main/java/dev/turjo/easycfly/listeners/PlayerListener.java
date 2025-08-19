@@ -18,13 +18,7 @@ public class PlayerListener implements Listener {
     
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
-        Player player = event.getPlayer();
-        
-        // Check for updates if player has permission
-        if (player.hasPermission("easycfly.admin.update") && 
-            plugin.getUpdateChecker() != null) {
-            plugin.getUpdateChecker().notifyPlayer(player);
-        }
+        // Player join logic can be added here if needed
     }
     
     @EventHandler
@@ -50,14 +44,6 @@ public class PlayerListener implements Listener {
             if (plugin.getFlightManager().isFlying(player)) {
                 plugin.getFlightManager().disableFlight(player);
                 plugin.getMessageUtil().sendMessage(player, "error.world-disabled");
-            }
-        }
-        
-        // Check if player can still fly in new world
-        if (plugin.getFlightManager().isFlying(player)) {
-            if (!plugin.getFlightManager().canFly(player, player.getLocation())) {
-                plugin.getFlightManager().disableFlight(player);
-                plugin.getMessageUtil().sendMessage(player, "flight.cannot-fly");
             }
         }
     }

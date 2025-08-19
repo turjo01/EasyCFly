@@ -1,32 +1,30 @@
 package dev.turjo.easycfly.managers;
 
 import dev.turjo.easycfly.EasyCFly;
-import dev.turjo.easycfly.events.PlayerFlightToggleEvent;
-import dev.turjo.easycfly.models.FlightData;
-import dev.turjo.easycfly.utils.MessageUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class FlightManager {
     
     private final EasyCFly plugin;
-    private final Map<UUID, FlightData> flightData;
+    private final Set<UUID> flyingPlayers;
     private final Map<UUID, BukkitTask> flightTasks;
     private final Map<UUID, Integer> flightTime;
+    private final Map<UUID, Location> lastLocation;
     
     public FlightManager(EasyCFly plugin) {
         this.plugin = plugin;
-        this.flightData = new ConcurrentHashMap<>();
+        this.flyingPlayers = ConcurrentHashMap.newKeySet();
         this.flightTasks = new HashMap<>();
         this.flightTime = new HashMap<>();
+        this.lastLocation = new HashMap<>();
         
         startFlightChecker();
     }
@@ -34,18 +32,27 @@ public class FlightManager {
     public boolean canFly(Player player, Location location) {
         // Check basic permission
         if (!player.hasPermission("easycfly.fly")) {
+            plugin.getLogger().info("Player " + player.getName() + " lacks easycfly.fly permission");
             return false;
         }
         
-        // Check if in claim
-        if (!plugin.getHookManager().isInOwnClaim(player, location) && 
-            !plugin.getTrustManager().isTrusted(location, player.getUniqueId())) {
+        // Check world restrictions
+        String worldName = location.getWorld().getName();
+        if (plugin.getConfigManager().getConfig().getStringList("worlds.disabled-worlds").contains(worldName)) {
+            plugin.getLogger().info("Flight disabled in world: " + worldName);
+            return false;
+        }
+        
+        // Check claim permissions
+        if (!plugin.getClaimManager().canFlyAtLocation(player, location)) {
+            plugin.getLogger().info("Player " + player.getName() + " cannot fly at location due to claim restrictions");
             return false;
         }
         
         // Check cooldown
         if (plugin.getCooldownManager().isOnCooldown(player.getUniqueId()) && 
             !player.hasPermission("easycfly.bypass.cooldown")) {
+            plugin.getLogger().info("Player " + player.getName() + " is on cooldown");
             return false;
         }
         
@@ -67,30 +74,26 @@ public class FlightManager {
         
         if (!canFly(player, player.getLocation())) {
             plugin.getMessageUtil().sendMessage(player, "flight.cannot-fly");
-            return;
-        }
-        
-        // Call event
-        PlayerFlightToggleEvent event = new PlayerFlightToggleEvent(player, true);
-        Bukkit.getPluginManager().callEvent(event);
-        
-        if (event.isCancelled()) {
+            plugin.getLogger().info("Cannot enable flight for " + player.getName() + " - failed canFly check");
             return;
         }
         
         // Charge economy
         if (plugin.getEconomyManager().isEnabled() && 
             !player.hasPermission("easycfly.bypass.cost")) {
-            plugin.getEconomyManager().chargeFlight(player);
+            if (!plugin.getEconomyManager().chargeFlight(player)) {
+                plugin.getMessageUtil().sendMessage(player, "economy.insufficient-funds");
+                return;
+            }
         }
         
         // Enable flight
         player.setAllowFlight(true);
         player.setFlying(true);
         
-        // Create flight data
-        FlightData data = new FlightData(player.getUniqueId(), System.currentTimeMillis());
-        flightData.put(player.getUniqueId(), data);
+        // Add to flying players
+        flyingPlayers.add(player.getUniqueId());
+        lastLocation.put(player.getUniqueId(), player.getLocation());
         
         // Start flight timer if time limit is enabled
         if (plugin.getConfigManager().getConfig().getBoolean("flight.time-limit.enabled") &&
@@ -107,13 +110,10 @@ public class FlightManager {
         // Play sound
         if (plugin.getConfigManager().getConfig().getBoolean("sounds.enabled")) {
             player.playSound(player.getLocation(), 
-                org.bukkit.Sound.ENTITY_ENDER_DRAGON_FLAP, 1.0f, 1.0f);
+                Sound.ENTITY_ENDER_DRAGON_FLAP, 1.0f, 1.0f);
         }
         
-        // Particle effects
-        if (plugin.getConfigManager().getConfig().getBoolean("effects.particles.enabled")) {
-            spawnFlightParticles(player);
-        }
+        plugin.getLogger().info("Flight enabled for " + player.getName());
     }
     
     public void disableFlight(Player player) {
@@ -128,20 +128,13 @@ public class FlightManager {
             return;
         }
         
-        // Call event
-        PlayerFlightToggleEvent event = new PlayerFlightToggleEvent(player, false);
-        Bukkit.getPluginManager().callEvent(event);
-        
-        if (event.isCancelled()) {
-            return;
-        }
-        
         // Disable flight
         player.setAllowFlight(false);
         player.setFlying(false);
         
-        // Remove flight data
-        flightData.remove(player.getUniqueId());
+        // Remove from flying players
+        flyingPlayers.remove(player.getUniqueId());
+        lastLocation.remove(player.getUniqueId());
         
         // Cancel flight timer
         BukkitTask task = flightTasks.remove(player.getUniqueId());
@@ -160,8 +153,10 @@ public class FlightManager {
         // Play sound
         if (plugin.getConfigManager().getConfig().getBoolean("sounds.enabled")) {
             player.playSound(player.getLocation(), 
-                org.bukkit.Sound.ENTITY_BAT_TAKEOFF, 1.0f, 0.8f);
+                Sound.ENTITY_BAT_TAKEOFF, 1.0f, 0.8f);
         }
+        
+        plugin.getLogger().info("Flight disabled for " + player.getName());
     }
     
     public void toggleFlight(Player player) {
@@ -173,11 +168,7 @@ public class FlightManager {
     }
     
     public boolean isFlying(Player player) {
-        return flightData.containsKey(player.getUniqueId());
-    }
-    
-    public FlightData getFlightData(Player player) {
-        return flightData.get(player.getUniqueId());
+        return flyingPlayers.contains(player.getUniqueId());
     }
     
     public int getRemainingFlightTime(Player player) {
@@ -185,7 +176,7 @@ public class FlightManager {
     }
     
     public void disableAllFlying() {
-        for (UUID uuid : flightData.keySet()) {
+        for (UUID uuid : new HashSet<>(flyingPlayers)) {
             Player player = Bukkit.getPlayer(uuid);
             if (player != null && player.isOnline()) {
                 disableFlight(player, false);
@@ -226,15 +217,36 @@ public class FlightManager {
         new BukkitRunnable() {
             @Override
             public void run() {
-                for (UUID uuid : flightData.keySet()) {
+                for (UUID uuid : new HashSet<>(flyingPlayers)) {
                     Player player = Bukkit.getPlayer(uuid);
                     if (player == null || !player.isOnline()) {
-                        flightData.remove(uuid);
+                        flyingPlayers.remove(uuid);
+                        lastLocation.remove(uuid);
                         continue;
                     }
                     
-                    // Check if still in valid area
-                    if (!canFly(player, player.getLocation())) {
+                    Location currentLoc = player.getLocation();
+                    Location lastLoc = lastLocation.get(uuid);
+                    
+                    // Only check if player moved to a different block
+                    if (lastLoc == null || 
+                        lastLoc.getBlockX() != currentLoc.getBlockX() ||
+                        lastLoc.getBlockZ() != currentLoc.getBlockZ() ||
+                        !lastLoc.getWorld().equals(currentLoc.getWorld())) {
+                        
+                        lastLocation.put(uuid, currentLoc);
+                        
+                        // Check if still in valid area
+                        if (!canFly(player, currentLoc)) {
+                            disableFlight(player);
+                            plugin.getMessageUtil().sendMessage(player, "flight.left-claim");
+                        }
+                    }
+                }
+            }
+        }.runTaskTimer(plugin, 40L, 40L); // Check every 2 seconds
+    }
+}
                         disableFlight(player);
                         plugin.getMessageUtil().sendMessage(player, "flight.left-claim");
                     }

@@ -1,5 +1,5 @@
 # ╔══════════════════════════════════════════════════════════════════════════════╗
-# ║                              EasyCFly v2.0.0                                ║
+# ║                              EasyCFly v1.1.1                                ║
 # ║                     Advanced Claim-Based Flying Plugin                      ║
 # ║                            Developer: Turjo                                 ║
 # ╚══════════════════════════════════════════════════════════════════════════════╝
@@ -69,14 +69,7 @@ economy:
 
 # Claim Plugin Integration
 claims:
-  # Supported: WorldGuard, GriefPrevention, Lands, Towny, Residence
-  priority: ["WorldGuard", "GriefPrevention", "Lands", "Towny", "Residence"]
-  
   # Allow flight in wilderness (unclaimed areas)
-  allow-wilderness: false
-  
-  # Minimum claim size for flight
-  min-claim-size: 100
 
 # Visual Effects
 effects:
